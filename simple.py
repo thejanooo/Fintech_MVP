@@ -4,6 +4,10 @@ from home import home_page
 from portfolio import portfolio_page
 from profile_page import profile_page
 
+# Initialize session state if not already done
+if 'portfolio' not in st.session_state:
+    st.session_state.portfolio = None
+
 # Horizontal side bar
 selected = option_menu(
     menu_title='',
