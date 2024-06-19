@@ -2,7 +2,7 @@ import streamlit as st
 from groq import Groq
 import os
 import json
-import matplotlib.pyplot as plt
+import plotly.express as px
 
 groq_api = "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"
 client = Groq(api_key=groq_api)
@@ -78,7 +78,7 @@ def get_portfolio(user_data):
                 "content": (
                     "You are an expert in financial advice. Your task is to generate a comprehensive investment portfolio for a client based on the details provided. "
                     "The portfolio should include a balanced mix of stocks, bonds, cash, and other investment options. "
-                    "Output should be in JSON format, do not add text around the json output. "
+                    "Output should be in valid JSON format without any text around the JSON output. "
                     "Tickers should be the ones used on Yahoo Finance, in the format 'AAPL', 'GOOGL', 'MSFT', etc. "
                     "Only output the investment recommendations and rationale. "
                     "Make sure to consider the client's age, income, monthly contribution, retirement age, ethical values, and risk aversion. "
@@ -92,7 +92,7 @@ def get_portfolio(user_data):
                 "content": user_message,
             }
         ],
-        model="llama3-70b-8192", 
+        model="llama3-8b-8192", 
         seed=42
     )
 
@@ -102,22 +102,41 @@ def get_portfolio(user_data):
 
 def parse_investments(ai_response):
     try:
+        # Debugging: Print the AI response to inspect it
+        st.write("### Debugging: AI Response")
+        st.write(ai_response)
+
+        # Attempt to correct common issues with JSON formatting
+        ai_response = ai_response.replace('\n', '')
+        ai_response = ai_response.replace('", "', '", "')
+
         # Extract the allocation details from the AI response
         investments = json.loads(ai_response)
+        
+        # Check the structure of investments
+        if isinstance(investments, dict):
+            investments = [{"asset Name": key, **value} for key, value in investments.items()]
+        
         return investments
+    except json.JSONDecodeError as e:
+        st.error(f"JSON decode error: {e}")
     except Exception as e:
         st.error(f"Error parsing AI response: {e}")
-        return None
+        st.write(ai_response)
+    return None
 
 def display_pie_chart(investments):
     labels = [inv['asset Name'] for inv in investments]
     sizes = [float(inv['allocation'].replace('%', '')) for inv in investments]
 
-    fig, ax = plt.subplots()
-    ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
-    ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    fig = px.pie(
+        values=sizes,
+        names=labels,
+        title='Portfolio Allocation',
+        hole=0.3
+    )
 
-    st.pyplot(fig)
+    st.plotly_chart(fig)
 
 def save_results(user_data, ai_response):
     results = {
