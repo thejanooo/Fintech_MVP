@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from home import home_page
 from portfolio import portfolio_page
-from profile_page import profile_page
+from simulation import simulation_page
 
 # Initialize session state if not already done
 if 'portfolio' not in st.session_state:
@@ -21,4 +21,4 @@ if selected == "Home":
 elif selected == "Portfolio":
     portfolio_page()
 elif selected == "Profile":
-    profile_page()
+    simulation_page()
