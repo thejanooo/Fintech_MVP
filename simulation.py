@@ -2,83 +2,124 @@ import streamlit as st
 import yfinance as yf
 import numpy as np
 import pandas as pd
-import json
+import plotly.graph_objects as go
+from ai_call import load_all_portfolios
+
+def fetch_ticker_data(tickers, period="10y"):
+    data = {}
+    for ticker in tickers:
+        try:
+            ticker_data = yf.Ticker(ticker)
+            history = ticker_data.history(period=period)
+            if not history.empty:
+                data[ticker] = history['Close']
+            else:
+                data[ticker] = None
+        except Exception as e:
+            st.write(f"Error fetching data for {ticker}: {e}")
+            data[ticker] = None
+    return data
+
+def deterministic_projection(data, stock_weight, bond_weight, cash_weight, initial_deposit, monthly_contribution, num_years, stock_rate, bond_rate, cash_rate):
+    months = num_years * 12
+    monthly_stock_rate = stock_rate / 12
+    monthly_bond_rate = bond_rate / 12
+    monthly_cash_rate = cash_rate / 12
+
+    projected_values = np.zeros(months)
+    portfolio_value = initial_deposit
+    for month in range(months):
+        # Calculate returns for each asset type
+        stock_return = monthly_stock_rate
+        bond_return = monthly_bond_rate
+        cash_return = monthly_cash_rate
+
+        # Calculate the new portfolio value based on the returns and weights
+        stock_part = portfolio_value * stock_weight * (1 + stock_return)
+        bond_part = portfolio_value * bond_weight * (1 + bond_return)
+        cash_part = portfolio_value * cash_weight * (1 + cash_return)
+
+        # Add the monthly contribution to the portfolio value
+        portfolio_value = stock_part + bond_part + cash_part + monthly_contribution
+        projected_values[month] = portfolio_value
+
+    return projected_values
 
 def simulation_page():
-    st.title("Portfolio Simulation")
-    
-    portfolio = load_portfolio()
-    
-    if portfolio:
-        investments = portfolio['portfolio']
-        display_simulation_options(investments)
-    else:
-        st.warning("No portfolio generated yet. Please go to the Home page to generate a portfolio.")
+    st.title("Simulation")
 
-def display_simulation_options(investments):
-    st.write("### Monte Carlo Simulation")
-
-    years = st.number_input("Enter the number of years for the simulation", min_value=1, value=10)
-    
-    if st.button("Run Simulation"):
-        run_simulation(investments, years)
-
-def run_simulation(investments, years):
-    tickers = [inv['ticker'] for inv in investments]
-    allocations = np.array([float(inv['allocation'].replace('%', '')) for inv in investments]) / 100
-    prices = fetch_prices(tickers)
-    
-    if prices is None:
-        st.error("Failed to fetch historical prices for the tickers.")
+    all_portfolios = load_all_portfolios()
+    if not all_portfolios:
+        st.warning("No portfolios generated yet. Please go to the Home page to generate a portfolio.")
         return
 
-    simulations = monte_carlo_simulation(prices, allocations, years)
-    display_simulation_results(simulations, years)
+    # Allow the user to select a portfolio
+    portfolio_options = [f"{portfolio['portfolio_name']} (Portfolio {i+1})" for i, portfolio in enumerate(all_portfolios)]
+    selected_portfolio = st.selectbox("Select a portfolio to simulate", portfolio_options)
+    
+    if selected_portfolio:
+        portfolio_index = portfolio_options.index(selected_portfolio)
+        investments = all_portfolios[portfolio_index]['portfolio']
+        user_data = all_portfolios[portfolio_index]['user_data']
+        
+        # Columns for side-by-side layout
+        col1, col2 = st.columns([1, 2])
+        
+        with col1:
+            # User inputs for updating simulation parameters
+            retirement_age = st.number_input("Retirement Age", min_value=user_data['age'] + 1, max_value=100, value=user_data['retirement_age'])
+            initial_deposit = st.number_input("Initial Deposit", min_value=0, value=user_data['Initial_investment'])
+            monthly_contribution = st.number_input("Monthly Contribution", min_value=0, value=user_data['monthly_contribution'])
 
-def fetch_prices(tickers):
-    prices = {}
-    try:
-        for ticker in tickers:
-            data = yf.download(ticker, start='2010-01-01')['Adj Close']
-            prices[ticker] = data
-        prices_df = pd.DataFrame(prices)
-        return prices_df
-    except Exception as e:
-        st.error(f"Error fetching prices: {e}")
-        return None
+        # Calculate the number of years to retirement
+        num_years = retirement_age - user_data['age']
+        if num_years <= 0:
+            st.error("Retirement age must be greater than current age.")
+            return
+        
+        # Fetch historical data for each ticker
+        tickers = [inv['ticker'] for inv in investments if inv['category'] == 'Stock']
+        ticker_data = fetch_ticker_data(tickers)
+        
+        # Filter out tickers with no data
+        valid_tickers = [ticker for ticker, data in ticker_data.items() if data is not None]
+        if not valid_tickers:
+            st.error("No valid data available for the selected portfolio.")
+            return
+        
+        data = pd.DataFrame({ticker: ticker_data[ticker] for ticker in valid_tickers})
+        stock_weight = sum([float(inv['allocation'].replace('%', '')) / 100 for inv in investments if inv['category'] == 'Stock'])
+        bond_weight = sum([float(inv['allocation'].replace('%', '')) / 100 for inv in investments if inv['category'] == 'Bond'])
+        cash_weight = sum([float(inv['allocation'].replace('%', '')) / 100 for inv in investments if inv['category'] == 'Cash'])
+        
+        # Calculate historical stock return
+        returns = np.log(data / data.shift(1)).dropna()
+        mean_annual_return = np.dot(np.array([float(inv['allocation'].replace('%', '')) / 100 for inv in investments if inv['ticker'] in valid_tickers]), returns.mean()) * 252  # Annualize mean return
+        
+        # Ensure the mean_annual_return is within a reasonable range
+        mean_annual_return = max(min(mean_annual_return, 0.15), 0.05)  # Assume returns are between 5% and 15%
+        
+        # Define fixed growth rates for bonds and cash
+        bond_rate = 0.02  # 2% annual return for bonds
+        cash_rate = 0.005  # 0.5% annual return for cash
 
-def monte_carlo_simulation(prices, allocations, years, num_simulations=1000):
-    returns = prices.pct_change().dropna()
-    mean_returns = returns.mean()
-    cov_matrix = returns.cov()
-    
-    portfolio_mean = np.dot(allocations, mean_returns)
-    portfolio_std_dev = np.sqrt(np.dot(allocations.T, np.dot(cov_matrix, allocations)))
-    
-    simulations = np.zeros((num_simulations, years))
-    
-    for i in range(num_simulations):
-        simulation = np.random.normal(portfolio_mean, portfolio_std_dev, years)
-        simulations[i] = np.cumprod(1 + simulation)
-    
-    return simulations
+        # Run deterministic projection for the average scenario
+        average_projection = deterministic_projection(data, stock_weight, bond_weight, cash_weight, initial_deposit, monthly_contribution, num_years, mean_annual_return, bond_rate, cash_rate)
+        
+        # Calculate total deposited amount
+        total_deposited = initial_deposit + (monthly_contribution * num_years * 12)
+        
+        with col2:
+            # Plot the projection results
+            st.write("### Portfolio Projection Results")
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=np.arange(1, len(average_projection) + 1), y=average_projection, mode='lines', name='Average'))
+            fig.update_layout(title='Deterministic Projection of Portfolio Value', xaxis_title='Months', yaxis_title='Portfolio Value ($)')
+            st.plotly_chart(fig)
 
-def display_simulation_results(simulations, years):
-    st.write("### Simulation Results")
-    
-    end_values = simulations[:, -1]
-    mean_end_value = np.mean(end_values)
-    median_end_value = np.median(end_values)
-    st.write(f"Mean end value: ${mean_end_value:.2f}")
-    st.write(f"Median end value: ${median_end_value:.2f}")
-    
-    st.line_chart(simulations.T)
+        # Display the final portfolio value statistics below the input fields
+        with col1:
+            st.write(f"**Total amount deposited:** ${total_deposited:.2f}")
+            st.write(f"**Final portfolio value (Average):** ${average_projection[-1]:.2f}")
+            st.write(f"**Extra revenue generated (Average):** ${average_projection[-1] - total_deposited:.2f}")
 
-def load_portfolio():
-    try:
-        with open("portfolios.json", "r") as file:
-            portfolios = json.load(file)
-            # For simplicity, load the first portfolio. Modify as needed to choose a specific portfolio.
-            return portfolios[0] if portfolios else None
-    except (FileNotFoundError, json.JSONDecodeError):
-        return None

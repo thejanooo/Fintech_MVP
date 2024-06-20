@@ -8,14 +8,15 @@ def get_portfolio(user_data):
     user_message = (
         f"Create a diversified investment portfolio for a client with the following details:\n"
         f"Age: {user_data['age']}\n"
-        f"Income: {user_data['income']}\n"
+        f"Initial_investment: {user_data['Initial_investment']}\n"
         f"Monthly Contribution: {user_data['monthly_contribution']}\n"
         f"Retirement Age: {user_data['retirement_age']}\n"
         f"Ethical Values: {', '.join(user_data['ethical_values'])}\n"
         f"Risk Aversion: {user_data['risk_aversion']}\n"
-        "Please ensure the portfolio includes a mix of stocks, bonds, and cash. "
+        "Ensure the portfolio includes a mix of stocks, bonds, and cash with detailed tickers only for stocks."
+        "Do not include tickers for bonds and cash."
         "Return the portfolio as a JSON list with each item in the following format: "
-        '{"asset_name": "Asset Name", "ticker": "Ticker", "allocation": "X%", "category": "Category", "rationale": "Reason for choosing this asset"}.'
+        '{"asset_name": "Asset Name", "ticker": "Ticker" (only for stocks, leave empty for bonds and cash), "allocation": "X%", "category": "Category (Stock/Bond/Cash)", "rationale": "Reason for choosing this asset"}.'
     )
 
     chat_completion = client.chat.completions.create(
@@ -24,7 +25,6 @@ def get_portfolio(user_data):
                 "role": "system",
                 "content": (
                     "You are an expert in financial advice. Your task is to generate a comprehensive investment portfolio for a client based on the details provided. "
-                    "The portfolio should include a balanced mix of stocks, bonds, cash, and other investment options. "
                     "Output should be in valid JSON format without any text around the JSON output. "
                     "Tickers should be the ones used on Yahoo Finance, in the format 'AAPL', 'GOOGL', 'MSFT', etc. "
                     "Only output the investment recommendations and rationale in the specified format."

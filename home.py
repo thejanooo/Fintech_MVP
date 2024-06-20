@@ -8,7 +8,7 @@ def home_page():
 
     with st.form(key='user_form'):
         age = st.number_input("Age", min_value=0, max_value=100, value=30)
-        income = st.number_input("Income", min_value=0)
+        Initial_investment = st.number_input("Initial investment", min_value=0)
         monthly_contribution = st.number_input("Monthly Contribution", min_value=0)
         retirement_age = st.number_input("Retirement Age", min_value=0, max_value=100, value=65)
         
@@ -32,7 +32,7 @@ def home_page():
         else:
             user_data = {
                 "age": age,
-                "income": income,
+                "Initial_investment": Initial_investment,
                 "monthly_contribution": monthly_contribution,
                 "retirement_age": retirement_age,
                 "ethical_values": ethical_values,

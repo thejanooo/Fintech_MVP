@@ -11,14 +11,14 @@ if 'portfolio' not in st.session_state:
 # Horizontal side bar
 selected = option_menu(
     menu_title='',
-    options=['Home', 'Portfolio', 'Profile'],
+    options=['Home', 'Portfolio', 'Simulation'],
     default_index=0,
-    orientation='horizontal'
+    orientation='horizontal',
 )
 
 if selected == "Home":
     home_page()
 elif selected == "Portfolio":
     portfolio_page()
-elif selected == "Profile":
+elif selected == "Simulation":
     simulation_page()
