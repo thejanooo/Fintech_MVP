@@ -34,6 +34,6 @@ RetireWise is an AI-driven platform designed to provide personalized, ethical, a
 ## Usage
 1. Run the Streamlit application:
    ```bash
-   streamlit run main.py
+   streamlit run scripts/main.py
    ```
 2. Open your web browser and go to `http://localhost:8501` to access the RetireWise application.
