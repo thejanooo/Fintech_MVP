@@ -1,22 +1,20 @@
-
-# RetireWise README
+# RetireWise
 
 ## Overview
 RetireWise is an AI-driven platform designed to provide personalized, ethical, and continuously optimized retirement planning solutions. This platform aims to make retirement planning accessible, transparent, and effective for everyone by leveraging cutting-edge AI technology to deliver highly personalized investment recommendations.
 
 ## Features
-- **AI-Driven Personalization:** Tailored investment plans based on user profiles including salary, spending, savings goals, risk tolerance, and future plans.
-- **Ethical Investment Options:** Align investments with ethical values and socially responsible investing.
-- **Continuous Portfolio Optimization:** Real-time updates and continuous portfolio adjustments based on market conditions and user data.
-- **Comprehensive Financial Planning Tools:** Scenario analysis, performance monitoring, and rebalancing suggestions.
-- **Integration with Brokerage Accounts:** Seamless execution of AI-generated portfolios through existing brokerage accounts.
+- **Generate a Portfolio with AI based on user info:** Creates a personalized investment portfolio using the Groq API based on user profiles including salary, spending, savings goals, risk tolerance, and future plans.
+- **Investment Portfolio Visualization:** Displays portfolio allocation by category using interactive visualizations.
+- **Investment Details:** Provides detailed information about the investments in the portfolio.
+- **Portfolio Simulation:** Uses Monte Carlo simulation to simulate different investment scenarios and outcomes to help users make informed decisions.
 
 ## Project Structure
 - `main.py`: The main entry point of the Streamlit web application.
 - `portfolio_creation.py`: Handles the creation of user portfolios based on their input.
 - `portfolio.py`: Manages and displays the details of user portfolios.
 - `simulation.py`: Simulates different investment scenarios and outcomes.
-- `ai_call.py`: Interfaces with the AI model to generate personalized investment recommendations.
+- `ai_call.py`: Interfaces with the AI model (Groq API) to generate personalized investment recommendations.
 - `home_page.py`: Manages the home page content and user interface.
 
 ## Installation
@@ -26,7 +24,7 @@ RetireWise is an AI-driven platform designed to provide personalized, ethical, a
    ```
 2. Navigate to the project directory:
    ```bash
-   cd retirewise
+   cd Fintech_MVP
    ```
 3. Install the required dependencies:
    ```bash
@@ -36,8 +34,6 @@ RetireWise is an AI-driven platform designed to provide personalized, ethical, a
 ## Usage
 1. Run the Streamlit application:
    ```bash
-   streamlit run main.py
+   streamlit run scripts/main.py
    ```
 2. Open your web browser and go to `http://localhost:8501` to access the RetireWise application.
-
-
