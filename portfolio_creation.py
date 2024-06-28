@@ -3,6 +3,18 @@ from ai_call import get_portfolio, parse_investments, save_portfolio, load_all_p
 import plotly.express as px
 
 def portfolio_creation_page():
+    """
+    Renders the portfolio creation page.
+
+    This function displays a form where users can input their portfolio details such as name, age, initial investment,
+    monthly contribution, retirement age, ethical values, and risk aversion. Upon submitting the form, the function
+    checks if a portfolio with the same user data already exists. If it does, the existing portfolio is displayed.
+    Otherwise, the function calls an AI model to generate a portfolio based on the user data, parses the AI response,
+    and saves the portfolio to a file.
+
+    Returns:
+        None
+    """
     st.markdown(
         """
         <h2 style="text-align: center;">

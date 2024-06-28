@@ -10,20 +10,21 @@ def monte_carlo_simulation(tickers, stock_alloc_overall, stock_alloc_individual,
     Perform Monte Carlo simulation to estimate the future portfolio values.
 
     Parameters:
-    tickers (list): List of stock tickers to download data for.
-    stock_alloc_overall (float): Overall allocation to stocks in the portfolio.
-    stock_alloc_individual (pandas.Series): Individual allocations to stocks for each ticker.
-    bond_alloc (float): Allocation to bonds in the portfolio.
-    cash_alloc (float): Allocation to cash in the portfolio.
-    initial_deposit (float): Initial deposit amount.
-    monthly_contribution (float): Monthly contribution amount.
-    years (int): Number of years to simulate.
-    simulations (int): Number of simulations to run.
-    seed (int, optional): Seed for random number generation. Defaults to None.
+    - tickers (list): List of stock tickers to download data for.
+    - stock_alloc_overall (float): Overall allocation to stocks in the portfolio.
+    - stock_alloc_individual (pandas.Series): Individual allocations to stocks in the portfolio.
+    - bond_alloc (float): Allocation to bonds in the portfolio.
+    - cash_alloc (float): Allocation to cash in the portfolio.
+    - initial_deposit (float): Initial deposit amount.
+    - monthly_contribution (float): Monthly contribution amount.
+    - years (int): Number of years to simulate.
+    - simulations (int): Number of simulations to run.
+    - seed (int, optional): Random seed for reproducibility.
 
     Returns:
-    tuple: A tuple containing three pandas.Series objects representing the median, optimistic, and pessimistic portfolio values.
-
+    - median_values (pandas.Series): Median portfolio values for each time period.
+    - optimistic_values (pandas.Series): Optimistic (95th percentile) portfolio values for each time period.
+    - pessimistic_values (pandas.Series): Pessimistic (5th percentile) portfolio values for each time period.
     """
     if seed is not None:
         np.random.seed(seed)
@@ -71,14 +72,10 @@ def simulation_page():
     """
     Renders the simulation page.
 
-    This function displays the simulation page, where users can select a portfolio to simulate and modify simulation parameters.
-    It retrieves the portfolios generated and checks if there are any portfolios available. If no portfolios are available, it displays a warning message.
-    Users can modify simulation parameters such as retirement age, initial deposit, and monthly contribution.
-    The function then calculates the stock, bond, and cash allocations based on the selected portfolio.
-    It performs a Monte Carlo simulation to generate median, optimistic, and pessimistic values for the portfolio over time.
-    The function displays summary boxes with the total amount deposited, final portfolio value (median), and extra revenue generated (median).
-    Finally, it plots the projection results using Plotly.
-
+    This function displays a simulation page with various parameters for simulating a portfolio's performance.
+    It loads all portfolios, allows the user to select a portfolio to simulate, and modifies simulation parameters
+    such as retirement age, initial deposit, and monthly contribution. It then performs a Monte Carlo simulation
+    to generate projected portfolio values over time and displays the results using metrics and a plot.
     """
     st.title("📈 Simulation")
 
@@ -154,3 +151,17 @@ def simulation_page():
                           template='plotly_white')
 
         st.plotly_chart(fig)
+        
+        # Explanation Text
+        final_median_value = median_values.iloc[-1]
+        years_post_retirement = 80 - retirement_age
+        months_post_retirement = years_post_retirement * 12
+        monthly_withdrawal = final_median_value / months_post_retirement
+
+        st.write(f"""
+        Based on the median projection, your portfolio could grow to **\${final_median_value:,.2f}** by the time you retire. 
+        However, considering the optimistic and pessimistic scenarios, your portfolio could range from **\${pessimistic_values.iloc[-1]:,.2f}** to **\${optimistic_values.iloc[-1]:,.2f}**.
+
+        Assuming you live until the age of 80, you would be able to withdraw approximately **\${monthly_withdrawal:,.2f}** per month from your median portfolio value.
+        """)
+

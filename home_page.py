@@ -1,6 +1,14 @@
 import streamlit as st
 
 def introduction_page():
+    """
+    Renders the introduction page for the RetireWise application.
+
+    This function displays a welcome message, information about RetireWise, and the steps to get started with the application.
+
+    Returns:
+        None
+    """
     st.markdown(
         """
         <h1 style="text-align: center;">

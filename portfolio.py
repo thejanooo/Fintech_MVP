@@ -3,6 +3,17 @@ import plotly.express as px
 from ai_call import load_all_portfolios
 
 def portfolio_page():
+    """
+    Renders the portfolio breakdown page.
+
+    This function displays the portfolio breakdown page, which allows the user to select a portfolio
+    to view and provides options for customizing the initial investment and monthly contribution.
+    It calls the `load_all_portfolios` function to load all portfolios and displays a warning message
+    if no portfolios are generated yet.
+
+    Returns:
+        None
+    """
     st.title("📊 Portfolio Breakdown")
     
     all_portfolios = load_all_portfolios()
@@ -25,6 +36,18 @@ def portfolio_page():
         display_overall_portfolio(investments, user_data, initial_investment, monthly_contribution)
 
 def display_overall_portfolio(investments, user_data, initial_investment, monthly_contribution):
+    """
+    Displays the overall portfolio allocation by category and allows the user to select a category to view details.
+
+    Parameters:
+    - investments (list): A list of investment dictionaries containing information about each investment.
+    - user_data (dict): A dictionary containing user-specific data.
+    - initial_investment (float): The initial investment amount.
+    - monthly_contribution (float): The monthly contribution amount.
+
+    Returns:
+    None
+    """
     categories = {}
     for inv in investments:
         category = inv['category']
@@ -53,6 +76,18 @@ def display_overall_portfolio(investments, user_data, initial_investment, monthl
         display_category_details(investments, selected_category, initial_investment, monthly_contribution)
     
 def display_category_details(investments, selected_category, initial_investment, monthly_contribution):
+    """
+    Displays the details of investments in a selected category.
+
+    Parameters:
+    - investments (list): A list of investment dictionaries.
+    - selected_category (str): The category of investments to display.
+    - initial_investment (float): The initial investment amount.
+    - monthly_contribution (float): The monthly contribution amount.
+
+    Returns:
+    None
+    """
     category_investments = [inv for inv in investments if inv['category'] == selected_category]
     
     st.write(f"### {selected_category} Breakdown")
