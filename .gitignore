@@ -2,10 +2,6 @@
 __pycache__/
 *.pyc
 
-# Ignore virtual environment directories
-venv/
-env/
-
 # Ignore IDE/editor specific files
 .vscode/
 .idea/
