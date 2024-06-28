@@ -22,6 +22,8 @@ def portfolio_page():
 def display_portfolio(investments):
     st.write("### Portfolio Breakdown")
     # Display a clean breakdown of the portfolio
+     # Display the pie chart
+    display_pie_chart(investments)
     for inv in investments:
         st.markdown(f"**{inv['asset_name']}**")
         st.markdown(f"**Ticker**: {inv['ticker']}")
@@ -30,8 +32,7 @@ def display_portfolio(investments):
         st.markdown(f"**Rationale**: {inv['rationale']}")
         st.markdown("---")
 
-    # Display the pie chart
-    display_pie_chart(investments)
+   
 
 def display_pie_chart(investments):
     labels = [inv['asset_name'] for inv in investments]
@@ -41,7 +42,8 @@ def display_pie_chart(investments):
         values=sizes,
         names=labels,
         title='Portfolio Allocation',
-        hole=0.3
+        hole=0.3,
+        height=500
     )
 
     st.plotly_chart(fig)

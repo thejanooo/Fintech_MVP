@@ -7,6 +7,7 @@ def home_page():
     st.write("Welcome to the Home page!")
 
     with st.form(key='user_form'):
+        portfolio_name = st.text_input("Portfolio Name", value="")
         age = st.number_input("Age", min_value=0, max_value=100, value=30)
         Initial_investment = st.number_input("Initial investment", min_value=0)
         monthly_contribution = st.number_input("Monthly Contribution", min_value=0)
@@ -22,7 +23,7 @@ def home_page():
             options=["Low", "Neutral", "High"]
         )
         
-        portfolio_name = st.text_input("Portfolio Name", value="")
+        
 
         submit_button = st.form_submit_button(label='Create Portfolio')
 
