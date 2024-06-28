@@ -2,9 +2,17 @@ import streamlit as st
 from ai_call import get_portfolio, parse_investments, save_portfolio, load_all_portfolios, check_existing_portfolio
 import plotly.express as px
 
-def home_page():
-    st.title("Home")
-    st.write("Welcome to the Home page!")
+def portfolio_creation_page():
+    st.markdown(
+        """
+        <h2 style="text-align: center;">
+            Retire<span style="color: #538786;">Wise</span>
+        </h2>
+        """,
+        unsafe_allow_html=True
+    )
+    st.title("Portfolio Creation")
+    st.write("Welcome to RetireWise! Your personalized path to a secure future. Let's create your portfolio.")
 
     with st.form(key='user_form'):
         portfolio_name = st.text_input("Portfolio Name", value="")
@@ -16,6 +24,7 @@ def home_page():
         ethical_values = st.multiselect(
             "Ethical Values",
             options=["Green Energy", "No Fossil", "No Tobacco", "Inclusive", "Promotes Social Equity"]
+
         )
         
         risk_aversion = st.selectbox(
@@ -23,8 +32,6 @@ def home_page():
             options=["Low", "Neutral", "High"]
         )
         
-        
-
         submit_button = st.form_submit_button(label='Create Portfolio')
 
     if submit_button:
@@ -49,7 +56,6 @@ def home_page():
                 ai_response = get_portfolio(user_data)
 
                 if ai_response:
-
                     # Parse the AI response
                     investments = parse_investments(ai_response)
 
@@ -62,29 +68,3 @@ def home_page():
                         st.error("Failed to parse investment details from the AI response. Please try again.")
                 else:
                     st.error("Failed to generate portfolio. Please try again.")
-
-def display_portfolio(investments):
-    # Display a clean breakdown of the portfolio
-    for inv in investments:
-        st.subheader(inv['asset_name'])
-        st.write(f"**Ticker**: {inv['ticker']}")
-        st.write(f"**Allocation**: {inv['allocation']}")
-        st.write(f"**Category**: {inv['category']}")
-        st.write(f"**Rationale**: {inv['rationale']}")
-        st.write("---")
-
-    # Display the pie chart
-    display_pie_chart(investments)
-
-def display_pie_chart(investments):
-    labels = [inv['asset_name'] for inv in investments]
-    sizes = [float(str(inv['allocation']).replace('%', '')) for inv in investments]
-
-    fig = px.pie(
-        values=sizes,
-        names=labels,
-        title='Portfolio Allocation',
-        hole=0.3
-    )
-
-    st.plotly_chart(fig)

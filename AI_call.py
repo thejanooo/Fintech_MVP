@@ -13,8 +13,8 @@ def get_portfolio(user_data):
         f"Retirement Age: {user_data['retirement_age']}\n"
         f"Ethical Values: {', '.join(user_data['ethical_values'])}\n"
         f"Risk Aversion: {user_data['risk_aversion']}\n"
-        "Ensure the portfolio includes a mix of stocks, bonds, and cash with detailed tickers only for stocks."
-        "Do not include tickers for bonds and cash."
+        "Ensure the portfolio includes a mix of stocks, bonds, and cash with detailed tickers only for stocks. "
+        "Do not include tickers for bonds and cash. "
         "Return the portfolio as a JSON list with each item in the following format: "
         '{"asset_name": "Asset Name", "ticker": "Ticker" (only for stocks, leave empty for bonds and cash), "allocation": "X%", "category": "Category (Stock/Bond/Cash)", "rationale": "Reason for choosing this asset"}.'
     )
@@ -45,7 +45,6 @@ def get_portfolio(user_data):
 
 def parse_investments(ai_response):
     try:
-        # Extract the allocation details from the AI response
         investments = json.loads(ai_response)
         return investments
     except json.JSONDecodeError as e:
