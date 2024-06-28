@@ -82,6 +82,7 @@ def simulation_page():
     This function displays a simulation page that allows the user to select a portfolio and simulate its performance over time.
     The user can update simulation parameters such as retirement age, initial deposit, and monthly contribution.
     The function runs a Monte Carlo simulation to generate projected portfolio values and displays the results in a plot.
+
     """
     st.title("Simulation")
 

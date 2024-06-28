@@ -3,14 +3,8 @@ from streamlit_option_menu import option_menu
 from home import home_page
 from portfolio import portfolio_page
 from simulation import simulation_page
-from login import main as login_main
 
 st.set_page_config(layout="wide")
-
-# Initialize user authentication
-login_main()
-
-
 
 
 # Initialize session state if not already done
