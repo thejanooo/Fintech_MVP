@@ -4,7 +4,7 @@
 RetireWise is an AI-driven platform designed to provide personalized, ethical, and continuously optimized retirement planning solutions. This platform aims to make retirement planning accessible, transparent, and effective for everyone by leveraging cutting-edge AI technology to deliver highly personalized investment recommendations.
 
 ## Features
-- **Generate a Portfolio with AI based on user info:** Creates a personalized investment portfolio using the Groq API based on user profiles including salary, spending, savings goals, risk tolerance, and future plans.
+- **Generate a Portfolio with AI based on user info:** Creates a personalized investment portfolio using the Groq API based on user profiles including initial deposit, monthly contribution, retirement age, age, ethical values, and risk tolerance.
 - **Investment Portfolio Visualization:** Displays portfolio allocation by category using interactive visualizations.
 - **Investment Details:** Provides detailed information about the investments in the portfolio.
 - **Portfolio Simulation:** Uses Monte Carlo simulation to simulate different investment scenarios and outcomes to help users make informed decisions.
