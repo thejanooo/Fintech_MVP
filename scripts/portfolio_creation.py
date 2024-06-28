@@ -1,5 +1,5 @@
 import streamlit as st
-from scripts.ai_call import get_portfolio, parse_investments, save_portfolio, load_all_portfolios, check_existing_portfolio
+from ai_call import get_portfolio, parse_investments, save_portfolio, load_all_portfolios, check_existing_portfolio
 import plotly.express as px
 
 def portfolio_creation_page():

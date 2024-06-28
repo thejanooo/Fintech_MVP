@@ -1,8 +1,8 @@
 import streamlit as st
-from scripts.home_page import introduction_page
-from scripts.portfolio_creation import portfolio_creation_page
-from scripts.portfolio import portfolio_page
-from scripts.simulation import simulation_page
+from home_page import introduction_page
+from portfolio_creation import portfolio_creation_page
+from portfolio import portfolio_page
+from simulation import simulation_page
 
 # Sidebar for navigation
 st.sidebar.markdown(

@@ -3,7 +3,7 @@ import yfinance as yf
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from scripts.ai_call import load_all_portfolios
+from ai_call import load_all_portfolios
 
 def monte_carlo_simulation(tickers, stock_alloc_overall, stock_alloc_individual, bond_alloc, cash_alloc, initial_deposit, monthly_contribution, years, simulations, seed=None):
     """

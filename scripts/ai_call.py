@@ -117,7 +117,7 @@ def load_all_portfolios():
         If the file is not found or cannot be decoded as JSON, an empty list is returned.
     """
     try:
-        with open("scripts/portfolios.json", "r") as file:
+        with open("portfolios.json", "r") as file:
             return json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         return []

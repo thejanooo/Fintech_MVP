@@ -1,6 +1,6 @@
 import streamlit as st
 import plotly.express as px
-from scripts.ai_call import load_all_portfolios
+from ai_call import load_all_portfolios
 
 def portfolio_page():
     """
